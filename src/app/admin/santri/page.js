@@ -90,14 +90,14 @@ export default function SantriPage() {
                     <td className="py-3 px-4">{santri.kabupaten || '-'}</td>
                     <td className="py-3 px-6">{santri.asrama || '-'}</td>
                     <td className="py-3 px-6 text-center">
-                      <Link
-    href={`/santri/detail/${santri.id}`}
+                      {/* <Link
+    href={`/admin/santri/detail/${santri.id}`}
     className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-xs"
   >
     Detail
-  </Link>
+  </Link> */}
                       <Link
-    href={`/santri/edit/${santri.id}`}
+    href={`/admin/santri/edit/${santri.id}`}
     className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-xs"
   >
     Edit

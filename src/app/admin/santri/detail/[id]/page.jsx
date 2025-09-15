@@ -27,7 +27,7 @@ export default async function SantriDetailPage({ params }) {
     return (
       <div className="p-8 text-center">
         <h1 className="text-2xl font-bold">Data Santri Tidak Ditemukan</h1>
-        <Link href="/santri" className="text-blue-500 hover:underline mt-4 inline-block">
+        <Link href="/admin/santri" className="text-blue-500 hover:underline mt-4 inline-block">
           Kembali ke Daftar Santri
         </Link>
       </div>
@@ -50,7 +50,7 @@ export default async function SantriDetailPage({ params }) {
             <h1 className="text-2xl font-bold text-gray-800">Detail Data Santri</h1>
             <p className="text-gray-600 mt-1">{santri.nama}</p>
           </div>
-          <Link href="/santri" className="text-sm text-blue-500 hover:underline">
+          <Link href="/admin/santri" className="text-sm text-blue-500 hover:underline">
             ← Kembali ke Daftar
           </Link>
         </div>

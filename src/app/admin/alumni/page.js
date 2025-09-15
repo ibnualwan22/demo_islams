@@ -56,7 +56,7 @@ export default function AlumniPage() {
               <h1 className="text-2xl font-bold text-gray-800">Data Alumni</h1>
               <p className="text-gray-600 mt-1">Total: {alumniList.length} Alumni</p>
             </div>
-            <Link href="/alumni/tambah" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            <Link href="/admin/alumni/tambah" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
               Tambah Alumni
             </Link>
           </div>
@@ -88,7 +88,7 @@ export default function AlumniPage() {
                     <td className="py-3 px-4 text-center space-x-2">
                       {/* TOMBOL EDIT */}
                       <Link 
-                        href={`/alumni/edit/${alumni.id}`}
+                        href={`/admin/alumni/edit/${alumni.id}`}
                         className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-xs"
                       >
                         Edit

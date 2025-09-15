@@ -118,7 +118,7 @@ export default function TambahAlumniPage() {
           </div>
 
           <div className="flex items-center justify-end space-x-4 pt-4">
-            <Link href="/alumni" className="text-gray-600 hover:text-gray-800">Batal</Link>
+            <Link href="/admin/alumni" className="text-gray-600 hover:text-gray-800">Batal</Link>
             <button type="submit" disabled={isLoading} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400">
               {isLoading ? 'Menyimpan...' : 'Simpan Data'}
             </button>
