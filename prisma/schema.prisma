@@ -1,0 +1,46 @@
+// File: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Model untuk Santri Aktif (dari API + input manual admin)
+model Santri {
+  id              String   @id @default(cuid())
+  nama            String
+  nis             String   @unique
+  asrama          String?
+  provinsi        String?
+  kabupaten       String?
+  kecamatan       String?
+  desa            String?
+  namaAyah        String?
+  namaIbu         String?
+  noHpOrangTua    String?
+  kelasFormal     String?
+  kelasNgaji      String?  // Diambil dari field 'activeClass' di API
+  ttl             String?
+  tahunMasuk      Int?     // Diisi otomatis dari NIS, bisa diubah admin
+  status          String   @default("AKTIF") // <-- TAMBAHKAN BARIS INI
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Model untuk Alumni (semua diinput manual oleh admin)
+model Alumni {
+  id                String   @id @default(cuid())
+  nama              String
+  alamatAsli        String?
+  alamatDomisili    String?
+  tahunMasuk        Int?
+  tahunKeluar       Int?
+  angkatanAmtsilati Int?     // Angkatan kelulusan amtsilati, opsional
+  noHp              String?  @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
