@@ -1,18 +1,25 @@
 // File: src/app/api/santri/aktif/route.js
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-const prisma = new PrismaClient();
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
     const santriAktif = await prisma.santri.findMany({
-      where: { status: 'AKTIF' }, // <-- FILTER UTAMA
+      where: { status: 'AKTIF' },
       orderBy: { nama: 'asc' },
+      select: { id: true, nama: true, tahunMasuk: true, daerah: true }, // aman untuk UI
     });
-    return NextResponse.json(santriAktif);
+    // kembalikan ARRAY murni
+    return NextResponse.json(santriAktif, { status: 200 });
   } catch (error) {
-    console.error("Gagal mengambil data santri aktif:", error);
-    return NextResponse.json({ message: "Gagal mengambil data." }, { status: 500 });
+    console.error('[/api/santri/aktif] gagal:', error);
+    return NextResponse.json(
+      { error: 'INTERNAL_ERROR', message: error?.message ?? 'Unknown' },
+      { status: 500 }
+    );
   }
 }
