@@ -6,7 +6,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET(request) {
-  // Ambil parameter 'name' dari URL, contoh: /api/public/search-alumni?name=fulan
   const { searchParams } = new URL(request.url);
   const nameQuery = searchParams.get('name');
 
@@ -18,21 +17,21 @@ export async function GET(request) {
   }
 
   try {
-    // Cari alumni yang namanya "mengandung" query, tidak case-sensitive
     const alumniFound = await prisma.alumni.findMany({
       where: {
+        status: 'APPROVED',
         nama: {
           contains: nameQuery,
-          mode: 'insensitive', // Tidak peduli huruf besar/kecil
+          mode: 'insensitive',
         },
       },
-      // Kita hanya kirim data yang aman untuk ditampilkan publik
       select: {
         id: true,
         nama: true,
-        tahunKeluar: true,
-        alamatDomisili: true,
-        alamatAsli: true,
+        angkatanAmtsilati: true,
+        // Kirim keduanya agar frontend bisa pilih domisili, fallback ke asli
+        kabupatenDomisili: true,
+        kabupatenAsli: true,
       },
     });
 

@@ -20,8 +20,26 @@ export async function GET(request, { params }) {
   }
 }
 
+// PATCH: Update sebagian data (digunakan untuk approval status)
+export async function PATCH(request, { params }) {
+  const { id } = params;
+  try {
+    const data = await request.json();
+    const updatedAlumni = await prisma.alumni.update({
+      where: { id: id },
+      data: data,
+    });
+    return NextResponse.json(updatedAlumni);
+  } catch (error) {
+    console.error(`Gagal PATCH data dengan ID ${id}:`, error);
+    if (error.code === 'P2025') {
+      return NextResponse.json({ message: "Data tidak ditemukan." }, { status: 404 });
+    }
+    return NextResponse.json({ message: "Gagal memperbarui data." }, { status: 500 });
+  }
+}
 
-// FUNGSI BARU: PUT untuk memperbarui data
+// PUT: Update seluruh data
 export async function PUT(request, { params }) {
   const { id } = params;
   const data = await request.json();
@@ -41,9 +59,9 @@ export async function PUT(request, { params }) {
   }
 }
 
-// Fungsi DELETE untuk menghapus data berdasarkan ID
+// DELETE: Hapus data berdasarkan ID
 export async function DELETE(request, { params }) {
-  const { id } = params; // Ambil ID dari URL
+  const { id } = params;
 
   try {
     await prisma.alumni.delete({
@@ -52,7 +70,6 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ message: "Data berhasil dihapus." }, { status: 200 });
   } catch (error) {
     console.error(`Gagal menghapus data dengan ID ${id}:`, error);
-    // Handle kasus jika ID tidak ditemukan
     if (error.code === 'P2025') {
        return NextResponse.json({ message: "Data tidak ditemukan." }, { status: 404 });
     }

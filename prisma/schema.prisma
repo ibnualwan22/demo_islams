@@ -14,6 +14,7 @@ model Santri {
   id              String   @id @default(cuid())
   nama            String
   nis             String   @unique
+  gender          String?  // PUTRA | PUTRI
   asrama          String?
   provinsi        String?
   kabupaten       String?
@@ -26,7 +27,9 @@ model Santri {
   kelasNgaji      String?  // Diambil dari field 'activeClass' di API
   ttl             String?
   tahunMasuk      Int?     // Diisi otomatis dari NIS, bisa diubah admin
-  status          String   @default("AKTIF") // <-- TAMBAHKAN BARIS INI
+  leadershipName  String?  // Nama kepengurusan (misal: NALAR ATI DAN JURNALISTIK)
+  leadershipStatus String? // Jabatan: MEMBER | KETUA dll
+  status          String   @default("AKTIF")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -35,12 +38,29 @@ model Santri {
 model Alumni {
   id                String   @id @default(cuid())
   nama              String
-  alamatAsli        String?
-  alamatDomisili    String?
+  gender            String?  // PUTRA | PUTRI
+
+  // Alamat Asli (terstruktur, mengikuti model Santri)
+  provinsiAsli      String?
+  kabupatenAsli     String?
+  kecamatanAsli     String?
+  desaAsli          String?
+
+  // Alamat Domisili (terstruktur)
+  provinsiDomisili   String?
+  kabupatenDomisili  String?
+  kecamatanDomisili  String?
+  desaDomisili       String?
+
+  // Detail tambahan
+  detailAlamat      String?  // RT/RW, nama jalan, dll
+
+  // Data lain
   tahunMasuk        Int?
   tahunKeluar       Int?
-  angkatanAmtsilati Int?     // Angkatan kelulusan amtsilati, opsional
+  angkatanAmtsilati Int?
   noHp              String?  @unique
+  status            String   @default("PENDING") // PENDING | APPROVED
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }

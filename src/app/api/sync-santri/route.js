@@ -15,7 +15,8 @@ const TARGET_KABUPATEN = [
 ];
 
 // Next.js secara default membuat fungsi ini di-cache.
-// Kita beritahu untuk tidak melakukan cache agar selalu mengambil data terbaru.
+// Kita gunakan force-dynamic dan revalidate=0 agar selalu mengambil data terbaru.
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
@@ -23,7 +24,9 @@ export async function GET() {
     try {
         // 1. Ambil data dari API eksternal
         // Kita set limit=2000 untuk mengambil lebih banyak data sekaligus
+        // Tambahkan cache: 'no-store' agar Next.js fetch tidak melakukan caching pada request ini
         const response = await fetch('https://sigap.amtsilatipusat.com/api/student?limit=2000', {
+            cache: 'no-store',
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
             }
@@ -73,6 +76,7 @@ export async function GET() {
                 update: {
                     // Data yang di-update jika sudah ada
                     nama: santri.name,
+                    gender: santri.gender,
                     asrama: santri.activeDormitory,
                     provinsi: santri.provinnce || santri.province, // Menangani typo 'provinnce' dari API
                     kabupaten: santri.regency,
@@ -84,6 +88,8 @@ export async function GET() {
                     kelasFormal: santri.formalClass,
                     kelasNgaji: santri.activeClass,
                     ttl: santri.ttl,
+                    leadershipName: santri.leadership?.name || null,
+                    leadershipStatus: santri.leadership?.status || null,
                     tahunMasuk: tahunMasukOtomatis, // <-- TAMBAHKAN BARIS INI
                     // PENTING: Kita tidak meng-update `tahunMasuk` di sini.
                     // Ini agar data yang sudah diubah manual oleh admin tidak tertimpa.
@@ -92,6 +98,7 @@ export async function GET() {
                     // Data yang dibuat jika belum ada
                     nis: santri.nis,
                     nama: santri.name,
+                    gender: santri.gender,
                     asrama: santri.activeDormitory,
                     provinsi: santri.provinnce || santri.province, // Menangani typo 'provinnce' dari API
                     kabupaten: santri.regency,
@@ -103,6 +110,8 @@ export async function GET() {
                     kelasFormal: santri.formalClass,
                     kelasNgaji: santri.activeClass,
                     ttl: santri.ttl,
+                    leadershipName: santri.leadership?.name || null,
+                    leadershipStatus: santri.leadership?.status || null,
                     tahunMasuk: tahunMasukOtomatis, // `tahunMasuk` hanya diisi saat pembuatan pertama.
                 }
             });

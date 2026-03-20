@@ -13,24 +13,25 @@ import TahunKeluarChart from "@/components/TahunKeluarChart";
 
 const prisma = new PrismaClient();
 
-// 1. FUNGSI UNTUK STATISTIK WILAYAH (dari kode Anda)
 async function getDashboardStats() {
   try {
     const regions = ['Magelang', 'Wonosobo', 'Temanggung', 'Banjarnegara'];
     const queries = [
       prisma.santri.count({ where: { status: 'AKTIF' } }),
-      prisma.alumni.count(),
+      prisma.alumni.count({ where: { status: 'APPROVED' } }),
     ];
 
     regions.forEach(region => {
       const santriWhereClause = region === 'Magelang'
         ? { status: 'AKTIF', OR: [{ kabupaten: 'Kab. Magelang' }, { kabupaten: 'Kota Magelang' }] }
         : { status: 'AKTIF', kabupaten: { contains: region, mode: 'insensitive' } };
-      
-      const alumniWhereClause = { 
+
+      // Filter berdasarkan kabupatenDomisili (utama) atau kabupatenAsli (fallback)
+      const alumniWhereClause = {
+        status: 'APPROVED',
         OR: [
-          { alamatAsli: { contains: region, mode: 'insensitive' } },
-          { alamatDomisili: { contains: region, mode: 'insensitive' } }
+          { kabupatenDomisili: { contains: region, mode: 'insensitive' } },
+          { kabupatenAsli: { contains: region, mode: 'insensitive' } },
         ]
       };
 
@@ -66,7 +67,8 @@ async function getDashboardStats() {
 async function getDataTahunMasuk() {
   try {
     const santriData = await prisma.santri.groupBy({ by: ['tahunMasuk'], _count: { tahunMasuk: true }, where: { tahunMasuk: { not: null } } });
-    const alumniData = await prisma.alumni.groupBy({ by: ['tahunMasuk'], _count: { tahunMasuk: true }, where: { tahunMasuk: { not: null } } });
+    // Hanya alumni APPROVED
+    const alumniData = await prisma.alumni.groupBy({ by: ['tahunMasuk'], _count: { tahunMasuk: true }, where: { tahunMasuk: { not: null }, status: 'APPROVED' } });
     const combinedData = {};
     [...santriData, ...alumniData].forEach(group => {
       const year = group.tahunMasuk;
@@ -87,7 +89,8 @@ async function getDataTahunMasuk() {
 // 3. FUNGSI UNTUK GRAFIK TAHUN KELUAR
 async function getDataTahunKeluar() {
   try {
-    const alumniData = await prisma.alumni.groupBy({ by: ['tahunKeluar'], _count: { tahunKeluar: true }, where: { tahunKeluar: { not: null } }, orderBy: { tahunKeluar: 'asc' } });
+    // Hanya alumni APPROVED
+    const alumniData = await prisma.alumni.groupBy({ by: ['tahunKeluar'], _count: { tahunKeluar: true }, where: { tahunKeluar: { not: null }, status: 'APPROVED' }, orderBy: { tahunKeluar: 'asc' } });
     return {
       labels: alumniData.map(group => group.tahunKeluar.toString()),
       data: alumniData.map(group => group._count.tahunKeluar),

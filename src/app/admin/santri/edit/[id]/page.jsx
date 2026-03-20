@@ -52,7 +52,7 @@ export default function EditSantriPage() {
 
       if (response.ok) {
         alert('Data santri berhasil diperbarui!');
-        router.push('/santri');
+        router.push('/admin/santri');
       } else {
         alert('Gagal memperbarui data.');
       }
@@ -63,7 +63,7 @@ export default function EditSantriPage() {
       setIsLoading(false);
     }
   };
-  
+
   if (!santriData) {
     return <div className="text-center py-20">Memuat data santri...</div>
   }
@@ -83,23 +83,23 @@ export default function EditSantriPage() {
             <label className="block text-sm font-medium text-gray-700">NIS</label>
             <input type="text" name="nis" value={santriData.nis} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100" readOnly />
           </div>
-           <div>
-    <label className="block text-sm font-medium text-gray-700">Alamat (Otomatis dari API)</label>
-    <input 
-        type="text" 
-        value={`${santriData.desa || ''}, ${santriData.kecamatan || ''}, ${santriData.kabupaten || ''}`} 
-        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100" 
-        readOnly 
-    />
-</div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Alamat (Otomatis dari API)</label>
+            <input
+              type="text"
+              value={`${santriData.desa || ''}, ${santriData.kecamatan || ''}, ${santriData.kabupaten || ''}`}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100"
+              readOnly
+            />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-             <div>
+            <div>
               <label className="block text-sm font-medium text-gray-700">Tahun Masuk (Manual)</label>
               <input type="number" name="tahunMasuk" value={santriData.tahunMasuk || ''} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" />
             </div>
           </div>
           <div className="flex items-center justify-end space-x-4 pt-4">
-            <Link href="/santri" className="text-gray-600 hover:text-gray-800">Batal</Link>
+            <Link href="/admin/santri" className="text-gray-600 hover:text-gray-800">Batal</Link>
             <button type="submit" disabled={isLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400">
               {isLoading ? 'Memperbarui...' : 'Perbarui Data'}
             </button>

@@ -6,37 +6,46 @@ const prisma = new PrismaClient();
 
 export async function POST(request, { params }) {
   const { id } = params;
-  const { tahunKeluar } = await request.json();
+  const dataPayload = await request.json();
 
   try {
-    // Gunakan transaksi untuk memastikan kedua operasi berhasil atau keduanya gagal
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Ambil data santri yang akan diluluskan
       const santri = await tx.santri.findUnique({
         where: { id: id },
       });
 
-      if (!santri) {
-        throw new Error('Santri tidak ditemukan.');
-      }
+      if (!santri) throw new Error('Santri tidak ditemukan.');
+      if (santri.status !== 'AKTIF') throw new Error('Santri ini sudah tidak aktif.');
 
-      if (santri.status !== 'AKTIF') {
-        throw new Error('Santri ini sudah tidak aktif.');
-      }
-
-      // 2. Buat entri baru di tabel Alumni
+      // Buat entri baru di tabel Alumni dengan data lengkap dari payload dan data santri
       const newAlumni = await tx.alumni.create({
         data: {
-          nama: santri.nama,
-          alamatAsli: santri.alamat, // Menggunakan alamat kabupaten dari data santri
-          alamatDomisili: santri.alamat, // Default disamakan, bisa diedit nanti
-          tahunMasuk: santri.tahunMasuk,
-          noHp: santri.noHpOrangTua, // Menggunakan No. HP orang tua sebagai default
-          tahunKeluar: tahunKeluar,
+          nama: dataPayload.nama || santri.nama,
+          gender: santri.gender,
+          
+          provinsiAsli: santri.provinsi,
+          kabupatenAsli: santri.kabupaten,
+          kecamatanAsli: santri.kecamatan,
+          desaAsli: santri.desa,
+          
+          provinsiDomisili: santri.provinsi,
+          kabupatenDomisili: santri.kabupaten,
+          kecamatanDomisili: santri.kecamatan,
+          desaDomisili: santri.desa,
+          
+          detailAlamat: dataPayload.detailAlamat || null,
+          
+          tahunMasuk: dataPayload.tahunMasuk ? parseInt(dataPayload.tahunMasuk) : santri.tahunMasuk,
+          tahunKeluar: dataPayload.tahunKeluar ? parseInt(dataPayload.tahunKeluar) : null,
+          angkatanAmtsilati: dataPayload.angkatanAmtsilati ? parseInt(dataPayload.angkatanAmtsilati) : null,
+          noHp: dataPayload.noHp || santri.noHpOrangTua,
+          
+          // Lulusan dari admin selalu diset APPROVED langsung
+          status: 'APPROVED',
         },
       });
 
-      // 3. Update status santri menjadi 'LULUS' (atau 'TIDAK AKTIF')
+      // Update status santri menjadi LULUS
       const updatedSantri = await tx.santri.update({
         where: { id: id },
         data: { status: 'LULUS' },

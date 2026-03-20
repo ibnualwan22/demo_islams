@@ -3,142 +3,69 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Users, UserCheck, MapPin, Search, Menu, X, Home, Info, Code, Settings } from 'lucide-react';
+import Image from "next/image";
+import { Users, UserCheck, MapPin, Search, X, ChevronRight, GraduationCap } from 'lucide-react';
 import TahunMasukChart from "@/components/TahunMasukChart";
 import TahunKeluarChart from "@/components/TahunKeluarChart";
 
-// Komponen Sidebar
-const Sidebar = ({ isOpen, onClose }) => {
-  const menuItems = [
-    { label: "Home", icon: Home, href: "/" },
-    { label: "Tentang", icon: Info, href: "#", comingSoon: true },
-    { label: "Program", icon: Code, href: "#", comingSoon: true },
-    { label: "Kontak", icon: Settings, href: "#", comingSoon: true },
-  ];
-
-  return (
-    <>
-      {/* Overlay untuk blur background */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
-          onClick={onClose}
-        />
-      )}
-      
-      {/* Sidebar */}
-      <div className={`
-        fixed top-0 left-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 z-50
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        {/* Header Sidebar */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-800">ISLAMS</h2>
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        {/* Menu Items */}
-        <nav className="p-4">
-          <ul className="space-y-2">
-            {menuItems.map((item, index) => (
-              <li key={index}>
-                <Link 
-                  href={item.href}
-                  className={`
-                    flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors
-                    ${item.comingSoon ? 'opacity-50 cursor-not-allowed' : 'hover:text-blue-600'}
-                  `}
-                  onClick={(e) => {
-                    if (item.comingSoon) {
-                      e.preventDefault();
-                    } else {
-                      onClose();
-                    }
-                  }}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                  {item.comingSoon && (
-                    <span className="text-xs bg-gray-200 px-2 py-1 rounded-full ml-auto">
-                      Soon
-                    </span>
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        
-        {/* Footer Sidebar */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
-          <p className="text-xs text-gray-500 text-center">
-            Ittihad Santri Amtsilati
-            <br />
-            Magelang, Temanggung, Wonosobo, Banjarnegara
-          </p>
-        </div>
+// ── Stat Card ─────────────────────────────────────────────────────────────────
+const StatCard = ({ title, value, icon: Icon, description, accent }) => (
+  <div className={`relative overflow-hidden rounded-2xl p-5 shadow-sm border border-white/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5`}>
+    <div className={`absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-4 translate-x-4 ${accent}`} />
+    <div className="flex items-center gap-3 mb-3">
+      <div className={`p-2 rounded-xl ${accent} bg-opacity-15`}>
+        <Icon className="h-4 w-4 text-white" />
       </div>
-    </>
-  );
-};
-
-// Komponen Card Statistik (masih sama)
-const StatCard = ({ title, value, icon: Icon, description }) => (
-  <Card>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-      <p className="text-xs text-muted-foreground">{description}</p>
-    </CardContent>
-  </Card>
+      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{title}</p>
+    </div>
+    <p className="text-3xl font-bold text-gray-800">{value ?? '—'}</p>
+    <p className="text-xs text-gray-400 mt-1">{description}</p>
+  </div>
 );
 
+// ── Region Card ────────────────────────────────────────────────────────────────
+const RegionCard = ({ region, santri, alumni }) => (
+  <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+    <div className="flex items-center gap-2 mb-3">
+      <MapPin className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+      <h4 className="font-semibold text-gray-800 text-sm">{region}</h4>
+    </div>
+    <div className="grid grid-cols-2 gap-2">
+      <div className="bg-blue-50 rounded-xl p-2.5 text-center">
+        <p className="text-xl font-bold text-blue-600">{santri ?? 0}</p>
+        <p className="text-[10px] text-blue-400 font-medium uppercase tracking-wide">Santri</p>
+      </div>
+      <div className="bg-emerald-50 rounded-xl p-2.5 text-center">
+        <p className="text-xl font-bold text-emerald-600">{alumni ?? 0}</p>
+        <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wide">Alumni</p>
+      </div>
+    </div>
+  </div>
+);
+
+// ── Main Page ──────────────────────────────────────────────────────────────────
 export default function PublicHomePage() {
   const [stats, setStats] = useState(null);
   const [charts, setCharts] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // --- LOGIKA PENCARIAN BARU ---
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searchMessage, setSearchMessage] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  // ------------------------------
+  const [hasSearched, setHasSearched] = useState(false);
 
-  // Ambil data statistik dan grafik
   useEffect(() => {
     async function loadData() {
-      setIsLoading(true);
       try {
         const [statsRes, chartsRes] = await Promise.all([
           fetch('/api/public/stats'),
           fetch('/api/public/charts')
         ]);
-        const statsData = await statsRes.json();
-        const chartsData = await chartsRes.json();
-        setStats(statsData);
-        setCharts(chartsData);
-      } catch (error) {
-        console.error("Gagal memuat data dashboard:", error);
+        setStats(await statsRes.json());
+        setCharts(await chartsRes.json());
+      } catch (e) {
+        console.error(e);
       } finally {
         setIsLoading(false);
       }
@@ -146,152 +73,286 @@ export default function PublicHomePage() {
     loadData();
   }, []);
 
-  // --- FUNGSI PENCARIAN BARU ---
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
     if (searchQuery.length < 3) {
-      setSearchMessage('Masukkan minimal 3 huruf untuk mencari.');
+      setSearchMessage('Masukkan minimal 3 huruf.');
+      setHasSearched(true);
       return;
     }
     setIsSearching(true);
     setSearchMessage('');
     setSearchResults([]);
+    setHasSearched(true);
 
     try {
-      const response = await fetch(`/api/public/search-alumni?name=${searchQuery}`);
-      const data = await response.json();
+      const res = await fetch(`/api/public/search-alumni?name=${encodeURIComponent(searchQuery)}`);
+      const data = await res.json();
       if (data.length > 0) {
         setSearchResults(data);
       } else {
         setSearchMessage('Data tidak ditemukan. Apakah Anda ingin mendaftar sebagai alumni?');
       }
-    } catch (error) {
-      setSearchMessage('Terjadi kesalahan saat mencari. Coba lagi nanti.');
+    } catch {
+      setSearchMessage('Terjadi kesalahan. Coba lagi nanti.');
     } finally {
       setIsSearching(false);
     }
   };
-  // -----------------------------
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setSearchMessage('');
+    setHasSearched(false);
+  };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
-        {/* Header dengan tombol toggle */}
-        <div className="bg-white shadow-sm p-4 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-gray-100">
+
+      {/* ── HERO SECTION ────────────────────────────────────────────────────── */}
+      <div
+        className="relative min-h-[55vh] sm:min-h-[65vh] flex flex-col items-center justify-center text-white text-center px-4 bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/bg-isat.jpg')" }}
+      >
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+        
+        {/* Nav bar */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 sm:px-8 py-4 z-20">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/images/logo-islams.png"
+              alt="ISLAMS Logo"
+              width={32}
+              height={32}
+              className="rounded-full ring-2 ring-white/30 object-cover"
+            />
+            <span className="font-bold text-sm sm:text-base text-white drop-shadow">ISLAMS</span>
+          </div>
+          <Link
+            href="/register-alumni"
+            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 rounded-full transition-all duration-200"
           >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-semibold lg:hidden">ISLAMS</h1>
-          <div className="w-10 lg:hidden"></div> {/* Spacer untuk mobile */}
+            Daftar Alumni
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
-        {/* BAGIAN 1: HEADER (Hero Section) */}
-        <div 
-          className="relative h-[60vh] md:h-[70vh] flex items-center justify-center text-white text-center bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/bg-isat.jpg')" }}
-        >
-          {/* Overlay gelap untuk membuat teks lebih mudah dibaca */}
-          <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
-          <div className="relative z-10 p-4">
-            <h1 className="text-5xl md:text-7xl font-bold mb-4">ISLAMS</h1>
-            <p className="text-xl md:text-2xl opacity-90">
-              Ittihad Santri Amtsilati Magelang, Temanggung, Wonosobo, Banjarnegara
+        {/* Hero content */}
+        <div className="relative z-10 flex flex-col items-center gap-4 px-4 max-w-2xl mx-auto">
+          {/* Logo */}
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-white/20 blur-xl scale-150" />
+            <Image
+              src="/images/logo-islams.png"
+              alt="ISLAMS Connection Logo"
+              width={96}
+              height={96}
+              className="relative rounded-full ring-4 ring-white/40 shadow-2xl object-cover w-20 h-20 sm:w-24 sm:h-24"
+              priority
+            />
+          </div>
+
+          {/* Title */}
+          <div>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">
+              ISLAMS{' '}
+              <span className="text-emerald-300">Connection</span>
+            </h1>
+            <p className="mt-2 text-sm sm:text-base md:text-lg text-white/80 font-light">
+              Ittihad Santri Amtsilati
+            </p>
+            <p className="text-xs sm:text-sm text-white/60 mt-1">
+              Magelang · Temanggung · Wonosobo · Banjarnegara
             </p>
           </div>
         </div>
-        
-        {/* Wrapper Konten */}
-        <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8 -mt-20 relative z-20 space-y-12">
-          
-          {/* BAGIAN PENCARIAN (Sudah Fungsional) */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Cek Data Alumni</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-muted-foreground">Silakan cari nama Anda untuk mengecek apakah sudah terdaftar.</p>
-              <form onSubmit={handleSearchSubmit} className="flex w-full max-w-lg items-center space-x-2">
-                <Input 
-                  type="text" 
-                  placeholder="Masukkan nama lengkap Anda..."
+      </div>
+
+      {/* ── SEARCH CARD ─────────────────────────────────────────────────────── */}
+      <div className="max-w-5xl mx-auto px-4 -mt-10 relative z-20 space-y-6 pb-16 sm:pb-20">
+
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          {/* Card header */}
+          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-xl">
+                <Search className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-base sm:text-lg">Cek Data Alumni</h2>
+                <p className="text-white/70 text-xs sm:text-sm">Cari nama Anda untuk mengecek status pendaftaran</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6">
+            {/* Search input */}
+            <form onSubmit={handleSearchSubmit} className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Masukkan nama lengkap..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)} 
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 transition-all"
                 />
-                <Button type="submit" disabled={isSearching}>
-                  {isSearching ? 'Mencari...' : <Search className="h-4 w-4 mr-2" />}
-                  {isSearching ? '' : 'Cari'}
-                </Button>
-              </form>
-              
-              {/* Area Hasil Pencarian */}
-              <div className="mt-6 space-y-4">
-                {searchResults.length > 0 && (
+              </div>
+              <button
+                type="submit"
+                disabled={isSearching}
+                className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-medium px-5 py-3 rounded-xl text-sm transition-colors duration-200 flex items-center gap-2 flex-shrink-0"
+              >
+                {isSearching ? (
+                  <span className="animate-pulse">Mencari...</span>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4" />
+                    <span className="hidden sm:inline">Cari</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Search Results */}
+            {hasSearched && (
+              <div className="mt-5">
+                {searchResults.length > 0 ? (
                   <div>
-                    <h4 className="font-semibold">Data Ditemukan:</h4>
-                    <ul className="list-disc pl-5 mt-2 space-y-2">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-gray-700 text-sm">
+                        {searchResults.length} data ditemukan
+                      </h3>
+                      <button onClick={clearSearch} className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
+                        <X className="h-3 w-3" />
+                        Bersihkan
+                      </button>
+                    </div>
+                    <ul className="space-y-2">
                       {searchResults.map(alumni => (
-                        <li key={alumni.id} className="p-2 border rounded-md">
-                          <span className="font-bold">{alumni.nama}</span>
-                          <p className="text-sm text-muted-foreground">Boyong: {alumni.tahunKeluar || '-'} | Domisili: {alumni.alamatDomisili || alumni.alamatAsli || '-'}</p>
+                        <li
+                          key={alumni.id}
+                          className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100"
+                        >
+                          <div className="bg-emerald-500 text-white w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm shadow-sm">
+                            {alumni.nama?.charAt(0)?.toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-800 truncate">{alumni.nama}</p>
+                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
+                              <span className="text-xs text-emerald-600 flex items-center gap-1">
+                                <GraduationCap className="h-3 w-3" />
+                                {alumni.angkatanAmtsilati ? `Angkatan ${alumni.angkatanAmtsilati}` : 'Angkatan —'}
+                              </span>
+                              <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <MapPin className="h-3 w-3" />
+                                {alumni.kabupatenDomisili || alumni.kabupatenAsli || '—'}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="flex-shrink-0 text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-2 py-1 rounded-full">
+                            Terdaftar
+                          </span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                )}
-                {searchMessage && (
-                  <div className="text-center p-4 bg-gray-50 rounded-md">
-                    <p className="mb-4">{searchMessage}</p>
-                    {/* Jika tidak ditemukan, tampilkan tombol daftar */}
+                ) : searchMessage ? (
+                  <div className="text-center py-8">
+                    <div className="w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Search className="h-6 w-6 text-amber-400" />
+                    </div>
+                    <p className="text-gray-600 text-sm mb-4">{searchMessage}</p>
                     {searchMessage.startsWith('Data tidak ditemukan') && (
-                      <Button asChild>
-                        <Link href="/register-alumni">Daftar Sebagai Alumni Baru</Link>
-                      </Button>
+                      <Link
+                        href="/register-alumni"
+                        className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-colors"
+                      >
+                        Daftar Sebagai Alumni Baru
+                        <ChevronRight className="h-4 w-4" />
+                      </Link>
                     )}
                   </div>
-                )}
+                ) : null}
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
+        </div>
 
-          {/* BAGIAN STATISTIK DAN GRAFIK (masih sama) */}
-          {isLoading ? (
-            <div className="text-center p-12">Memuat data statistik...</div>
-          ) : stats && charts ? (
-            <div className="space-y-8">
-              {/* Statistik ... */}
-              <div>
-                <h2 className="text-3xl font-bold mb-6 text-center">Statistik Korda</h2>
-                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-                   <StatCard title="Santri Aktif" value={stats.totalSantri} icon={Users} description="Total santri berstatus aktif" />
-                   <StatCard title="Alumni" value={stats.totalAlumni} icon={UserCheck} description="Total alumni yang terdata" />
-                 </div>
-                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                   <StatCard title="Santri Magelang" value={stats.santriMagelang} icon={MapPin} description="Kota & Kab. Magelang" />
-                   <StatCard title="Alumni Magelang" value={stats.alumniMagelang} icon={MapPin} description="Kota & Kab. Magelang" />
-                   <StatCard title="Santri Wonosobo" value={stats.santriWonosobo} icon={MapPin} description="Kab. Wonosobo" />
-                   <StatCard title="Alumni Wonosobo" value={stats.alumniWonosobo} icon={MapPin} description="Kab. Wonosobo" />
-                   <StatCard title="Santri Temanggung" value={stats.santriTemanggung} icon={MapPin} description="Kab. Temanggung" />
-                   <StatCard title="Alumni Temanggung" value={stats.alumniTemanggung} icon={MapPin} description="Kab. Temanggung" />
-                   <StatCard title="Santri Banjarnegara" value={stats.santriBanjarnegara} icon={MapPin} description="Kab. Banjarnegara" />
-                   <StatCard title="Alumni Banjarnegara" value={stats.alumniBanjarnegara} icon={MapPin} description="Kab. Banjarnegara" />
-                 </div>
-              </div>
-              {/* Grafik ... */}
-              <div className="grid gap-8 lg:grid-cols-2">
-                <Card><CardContent className="p-6"><TahunMasukChart chartData={charts.dataTahunMasuk} /></CardContent></Card>
-                <Card><CardContent className="p-6"><TahunKeluarChart chartData={charts.dataTahunKeluar} /></CardContent></Card>
+        {/* ── STATISTIK ─────────────────────────────────────────────────────── */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+            <p className="text-sm text-gray-400">Memuat data statistik...</p>
+          </div>
+        ) : stats && charts ? (
+          <div className="space-y-6">
+
+            {/* Section Title */}
+            <div className="text-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Statistik Korda</h2>
+              <p className="text-sm text-gray-500 mt-1">Data santri aktif & alumni terverifikasi</p>
+            </div>
+
+            {/* Total Counts */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <StatCard
+                title="Santri Aktif"
+                value={stats.totalSantri}
+                icon={Users}
+                description="Berstatus aktif"
+                accent="bg-blue-500"
+              />
+              <StatCard
+                title="Alumni"
+                value={stats.totalAlumni}
+                icon={UserCheck}
+                description="Terverifikasi"
+                accent="bg-emerald-500"
+              />
+            </div>
+
+            {/* Per Region */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 px-1">Rincian per Wilayah</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <RegionCard region="Magelang" santri={stats.santriMagelang} alumni={stats.alumniMagelang} />
+                <RegionCard region="Wonosobo" santri={stats.santriWonosobo} alumni={stats.alumniWonosobo} />
+                <RegionCard region="Temanggung" santri={stats.santriTemanggung} alumni={stats.alumniTemanggung} />
+                <RegionCard region="Banjarnegara" santri={stats.santriBanjarnegara} alumni={stats.alumniBanjarnegara} />
               </div>
             </div>
-          ) : null}
-        </div>
+
+            {/* Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <TahunMasukChart chartData={charts.dataTahunMasuk} />
+              </div>
+              <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <TahunKeluarChart chartData={charts.dataTahunKeluar} />
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {/* ── FOOTER ────────────────────────────────────────────────────────── */}
+        <footer className="text-center pt-6 pb-2">
+          <Image
+            src="/images/logo-islams.png"
+            alt="ISLAMS"
+            width={36}
+            height={36}
+            className="mx-auto rounded-full mb-2 opacity-60 object-cover"
+          />
+          <p className="text-xs text-gray-400">
+            © {new Date().getFullYear()} ISLAMS Connection
+          </p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            Ittihad Santri Amtsilati · Magelang, Temanggung, Wonosobo, Banjarnegara
+          </p>
+        </footer>
       </div>
     </div>
   );

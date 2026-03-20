@@ -4,17 +4,25 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Fungsi ini kita ambil dari dashboard admin Anda
 async function getDashboardStats() {
   try {
     const regions = ['Magelang', 'Wonosobo', 'Temanggung', 'Banjarnegara'];
     const queries = [
       prisma.santri.count({ where: { status: 'AKTIF' } }),
-      prisma.alumni.count(),
+      prisma.alumni.count({ where: { status: 'APPROVED' } }),
     ];
     regions.forEach(region => {
-      const sWhere = region === 'Magelang' ? { status: 'AKTIF', OR: [{ kabupaten: 'Kab. Magelang' }, { kabupaten: 'Kota Magelang' }] } : { status: 'AKTIF', kabupaten: { contains: region, mode: 'insensitive' } };
-      const aWhere = { OR: [{ alamatAsli: { contains: region, mode: 'insensitive' } }, { alamatDomisili: { contains: region, mode: 'insensitive' } }] };
+      const sWhere = region === 'Magelang'
+        ? { status: 'AKTIF', OR: [{ kabupaten: 'Kab. Magelang' }, { kabupaten: 'Kota Magelang' }] }
+        : { status: 'AKTIF', kabupaten: { contains: region, mode: 'insensitive' } };
+      // Cek kabupatenDomisili (utama) atau kabupatenAsli (fallback)
+      const aWhere = {
+        status: 'APPROVED',
+        OR: [
+          { kabupatenDomisili: { contains: region, mode: 'insensitive' } },
+          { kabupatenAsli: { contains: region, mode: 'insensitive' } },
+        ]
+      };
       queries.push(prisma.santri.count({ where: sWhere }));
       queries.push(prisma.alumni.count({ where: aWhere }));
     });
@@ -28,7 +36,7 @@ async function getDashboardStats() {
     };
   } catch (error) {
     console.error("Gagal mengambil statistik:", error);
-    return {}; // Kembalikan objek kosong jika gagal
+    return {};
   }
 }
 
