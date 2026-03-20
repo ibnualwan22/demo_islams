@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
 
 // Fungsi untuk MEMPERBARUI data santri
 export async function PUT(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const data = await request.json();
 
   try {

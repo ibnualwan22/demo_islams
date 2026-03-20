@@ -5,6 +5,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { MessageCircle, CheckCircle } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 export default function AlumniPage() {
   const [alumniList, setAlumniList] = useState([]);
@@ -29,7 +30,7 @@ export default function AlumniPage() {
       setAlumniList(data);
     } catch (error) {
       console.error("Gagal memuat data alumni:", error);
-      alert('Gagal memuat data alumni. Coba refresh halaman.');
+      Swal.fire('Error!', 'Gagal memuat data alumni. Coba refresh halaman.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -40,26 +41,44 @@ export default function AlumniPage() {
   }, []);
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm('Apakah Anda yakin ingin menghapus data alumni ini?');
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: 'Hapus Data?',
+      text: "Data alumni ini akan dihapus secara permanen!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal'
+    });
+    if (!result.isConfirmed) return;
 
     try {
       const response = await fetch(`/api/alumni/${id}`, { method: 'DELETE' });
       if (response.ok) {
-        alert('Data berhasil dihapus!');
+        Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
         getAlumniData();
       } else {
-        alert('Gagal menghapus data.');
+        Swal.fire('Gagal!', 'Gagal menghapus data.', 'error');
       }
     } catch (error) {
       console.error('Error saat menghapus data:', error);
-      alert('Terjadi kesalahan koneksi.');
+      Swal.fire('Error!', 'Terjadi kesalahan koneksi.', 'error');
     }
   };
 
   const handleApprove = async (id) => {
-    const confirmed = window.confirm('Setujui pendaftaran alumni ini?');
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: 'Setujui Alumni?',
+      text: "Alumni ini akan mendapatkan status APPROVED.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#10b981',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Ya, Setujui',
+      cancelButtonText: 'Batal'
+    });
+    if (!result.isConfirmed) return;
 
     try {
       const response = await fetch(`/api/alumni/${id}`, {
@@ -68,14 +87,14 @@ export default function AlumniPage() {
         body: JSON.stringify({ status: 'APPROVED' }),
       });
       if (response.ok) {
-        alert('Alumni berhasil disetujui!');
+        Swal.fire('Disetujui!', 'Alumni berhasil disetujui.', 'success');
         getAlumniData();
       } else {
-        alert('Gagal menyetujui data.');
+        Swal.fire('Gagal!', 'Gagal menyetujui data.', 'error');
       }
     } catch (error) {
       console.error('Error saat approve:', error);
-      alert('Terjadi kesalahan koneksi.');
+      Swal.fire('Error!', 'Terjadi kesalahan koneksi.', 'error');
     }
   };
 
@@ -114,15 +133,15 @@ export default function AlumniPage() {
   const approvedCount = alumniList.filter(a => a.status === 'APPROVED').length;
 
   return (
-    <main className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+    <main className="bg-slate-50 min-h-screen">
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 relative">
+        <div className="bg-white shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden relative z-10 border border-slate-100">
           
           {/* Header */}
-          <div className="px-6 py-4 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="px-8 py-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Data Alumni</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-2xl font-bold text-slate-800">Data Alumni</h1>
+              <p className="text-slate-500 mt-1">
                 Total Status {activeTab}: {filteredList.length} dari {alumniList.length} Alumni
                 {pendingCount > 0 && (
                   <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">

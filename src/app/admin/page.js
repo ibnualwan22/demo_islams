@@ -102,15 +102,18 @@ async function getDataTahunKeluar() {
 }
 
 // Komponen Card Statistik (dari kode Anda)
-const StatCard = ({ title, value, icon: Icon, description }) => (
-  <Card>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      <Icon className="h-4 w-4 text-muted-foreground" />
+const StatCard = ({ title, value, icon: Icon, description, colorClass = "from-sky-500 to-blue-600" }) => (
+  <Card className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-200 group relative">
+    <div className={`absolute top-0 left-0 w-1 h-full bg-gradient-to-b ${colorClass}`} />
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-white z-10 relative">
+      <CardTitle className="text-sm font-medium text-slate-600">{title}</CardTitle>
+      <div className={`p-2 rounded-lg bg-gradient-to-br ${colorClass} text-white shadow-sm opacity-80 group-hover:opacity-100 transition-opacity`}>
+        <Icon className="h-4 w-4" />
+      </div>
     </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-      <p className="text-xs text-muted-foreground">{description}</p>
+    <CardContent className="bg-white z-10 relative pt-2">
+      <div className="text-2xl font-bold text-slate-800">{value}</div>
+      <p className="text-xs text-slate-500 mt-1">{description}</p>
     </CardContent>
   </Card>
 );
@@ -123,30 +126,39 @@ export default async function DashboardPage() {
   const dataTahunKeluar = await getDataTahunKeluar();
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Dashboard Admin</h1>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 bg-slate-50 min-h-screen">
+      <div className="flex flex-col gap-1 mb-8">
+        <h1 className="text-3xl font-bold text-slate-800">Dashboard Admin</h1>
+        <p className="text-slate-500">Ringkasan statistik data Santri dan Alumni ISLAMS.</p>
+      </div>
 
       {/* Total Keseluruhan */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">Total Keseluruhan</h2>
+        <h2 className="text-lg font-semibold mb-4 text-slate-700 flex items-center gap-2">
+          <div className="w-1.5 h-5 bg-sky-500 rounded-full"></div>
+          Total Keseluruhan
+        </h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Santri Aktif" value={stats.totalSantri} icon={Users} description="Total santri berstatus aktif" />
-          <StatCard title="Alumni" value={stats.totalAlumni} icon={UserCheck} description="Total alumni yang terdata" />
+          <StatCard title="Santri Aktif" value={stats.totalSantri} icon={Users} description="Total santri berstatus aktif" colorClass="from-emerald-400 to-teal-500" />
+          <StatCard title="Alumni" value={stats.totalAlumni} icon={UserCheck} description="Total alumni yang terdata (Approved)" colorClass="from-blue-400 to-indigo-500" />
         </div>
       </div>
 
       {/* Rincian per Kabupaten */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">Rincian per Wilayah</h2>
+        <h2 className="text-lg font-semibold mb-4 text-slate-700 flex items-center gap-2">
+          <div className="w-1.5 h-5 bg-sky-500 rounded-full"></div>
+          Rincian per Wilayah
+        </h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Santri Magelang" value={stats.santriMagelang} icon={MapPin} description="Kota & Kab. Magelang" />
-          <StatCard title="Alumni Magelang" value={stats.alumniMagelang} icon={MapPin} description="Kota & Kab. Magelang" />
-          <StatCard title="Santri Wonosobo" value={stats.santriWonosobo} icon={MapPin} description="Kab. Wonosobo" />
-          <StatCard title="Alumni Wonosobo" value={stats.alumniWonosobo} icon={MapPin} description="Kab. Wonosobo" />
-          <StatCard title="Santri Temanggung" value={stats.santriTemanggung} icon={MapPin} description="Kab. Temanggung" />
-          <StatCard title="Alumni Temanggung" value={stats.alumniTemanggung} icon={MapPin} description="Kab. Temanggung" />
-          <StatCard title="Santri Banjarnegara" value={stats.santriBanjarnegara} icon={MapPin} description="Kab. Banjarnegara" />
-          <StatCard title="Alumni Banjarnegara" value={stats.alumniBanjarnegara} icon={MapPin} description="Kab. Banjarnegara" />
+          <StatCard title="Santri Magelang" value={stats.santriMagelang} icon={MapPin} description="Kota & Kab. Magelang" colorClass="from-amber-400 to-orange-500" />
+          <StatCard title="Alumni Magelang" value={stats.alumniMagelang} icon={MapPin} description="Kota & Kab. Magelang" colorClass="from-slate-400 to-slate-600" />
+          <StatCard title="Santri Wonosobo" value={stats.santriWonosobo} icon={MapPin} description="Kab. Wonosobo" colorClass="from-amber-400 to-orange-500" />
+          <StatCard title="Alumni Wonosobo" value={stats.alumniWonosobo} icon={MapPin} description="Kab. Wonosobo" colorClass="from-slate-400 to-slate-600" />
+          <StatCard title="Santri Temanggung" value={stats.santriTemanggung} icon={MapPin} description="Kab. Temanggung" colorClass="from-amber-400 to-orange-500" />
+          <StatCard title="Alumni Temanggung" value={stats.alumniTemanggung} icon={MapPin} description="Kab. Temanggung" colorClass="from-slate-400 to-slate-600" />
+          <StatCard title="Santri Banjarnegara" value={stats.santriBanjarnegara} icon={MapPin} description="Kab. Banjarnegara" colorClass="from-amber-400 to-orange-500" />
+          <StatCard title="Alumni Banjarnegara" value={stats.alumniBanjarnegara} icon={MapPin} description="Kab. Banjarnegara" colorClass="from-slate-400 to-slate-600" />
         </div>
       </div>
 

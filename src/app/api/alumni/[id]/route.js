@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const alumni = await prisma.alumni.findUnique({
       where: { id: id },
@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
 
 // PATCH: Update sebagian data (digunakan untuk approval status)
 export async function PATCH(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const data = await request.json();
     const updatedAlumni = await prisma.alumni.update({
@@ -41,7 +41,7 @@ export async function PATCH(request, { params }) {
 
 // PUT: Update seluruh data
 export async function PUT(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const data = await request.json();
 
   try {
@@ -61,7 +61,7 @@ export async function PUT(request, { params }) {
 
 // DELETE: Hapus data berdasarkan ID
 export async function DELETE(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await prisma.alumni.delete({

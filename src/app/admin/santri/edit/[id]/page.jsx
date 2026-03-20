@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 export default function EditSantriPage() {
   const router = useRouter();
@@ -51,14 +52,14 @@ export default function EditSantriPage() {
       });
 
       if (response.ok) {
-        alert('Data santri berhasil diperbarui!');
+        Swal.fire('Berhasil!', 'Data santri berhasil diperbarui.', 'success');
         router.push('/admin/santri');
       } else {
-        alert('Gagal memperbarui data.');
+        Swal.fire('Gagal!', 'Gagal memperbarui data.', 'error');
       }
     } catch (error) {
       console.error("Error saat update:", error);
-      alert('Terjadi kesalahan koneksi.');
+      Swal.fire('Error!', 'Terjadi kesalahan koneksi.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -69,12 +70,13 @@ export default function EditSantriPage() {
   }
 
   return (
-    <main className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
-      <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg">
-        <div className="px-6 py-4 border-b">
-          <h1 className="text-2xl font-bold text-gray-800">Edit Data Santri</h1>
+    <main className="bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="max-w-3xl mx-auto bg-white shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden border border-slate-100">
+        <div className="px-8 py-6 border-b border-slate-100 bg-white">
+          <h1 className="text-2xl font-bold text-slate-800">Edit Data Santri</h1>
+          <p className="text-slate-500 text-sm mt-1">Tinjau dan perbarui informasi utama santri aktif.</p>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Nama</label>
             <input type="text" name="nama" value={santriData.nama} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" required />
@@ -98,9 +100,9 @@ export default function EditSantriPage() {
               <input type="number" name="tahunMasuk" value={santriData.tahunMasuk || ''} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" />
             </div>
           </div>
-          <div className="flex items-center justify-end space-x-4 pt-4">
-            <Link href="/admin/santri" className="text-gray-600 hover:text-gray-800">Batal</Link>
-            <button type="submit" disabled={isLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400">
+          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-slate-100 mt-6">
+            <Link href="/admin/santri" className="px-4 py-2 text-slate-600 hover:text-slate-900 font-medium transition-colors">Batal</Link>
+            <button type="submit" disabled={isLoading} className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm shadow-sky-600/30 disabled:opacity-50 transition-colors">
               {isLoading ? 'Memperbarui...' : 'Perbarui Data'}
             </button>
           </div>

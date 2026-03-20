@@ -5,6 +5,7 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 import AlamatBertingkat from '@/components/AlamatBertingkat';
 
 export default function TambahAlumniPage() {
@@ -58,27 +59,28 @@ export default function TambahAlumniPage() {
       });
 
       if (response.ok) {
-        alert('Data alumni berhasil disimpan!');
+        Swal.fire('Berhasil!', 'Data alumni berhasil disimpan.', 'success');
         router.push('/admin/alumni');
       } else {
         const errorData = await response.json();
-        alert(`Gagal menyimpan data: ${errorData.message}`);
+        Swal.fire('Gagal!', `Gagal menyimpan data: ${errorData.message}`, 'error');
       }
     } catch (error) {
       console.error("Error saat mengirim form:", error);
-      alert('Terjadi kesalahan pada koneksi. Silakan coba lagi.');
+      Swal.fire('Error!', 'Terjadi kesalahan pada koneksi. Silakan coba lagi.', 'error');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <main className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
-      <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg">
-        <div className="px-6 py-4 border-b">
-          <h1 className="text-2xl font-bold text-gray-800">Tambah Data Alumni Baru</h1>
+    <main className="bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="max-w-3xl mx-auto bg-white shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden border border-slate-100">
+        <div className="px-8 py-6 border-b border-slate-100 bg-white">
+          <h1 className="text-2xl font-bold text-slate-800">Tambah Data Alumni Baru</h1>
+          <p className="text-slate-500 text-sm mt-1">Lengkapi form di bawah ini untuk menambahkan alumni ke dalam sistem.</p>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="nama" className="block text-sm font-medium text-gray-700">Nama Lengkap</label>
@@ -137,9 +139,9 @@ export default function TambahAlumniPage() {
             <input type="text" id="noHp" value={noHp} onChange={(e) => setNoHp(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" />
           </div>
 
-          <div className="flex items-center justify-end space-x-4 pt-4">
-            <Link href="/admin/alumni" className="text-gray-600 hover:text-gray-800">Batal</Link>
-            <button type="submit" disabled={isLoading} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400">
+          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-slate-100 mt-6">
+            <Link href="/admin/alumni" className="px-4 py-2 text-slate-600 hover:text-slate-900 font-medium transition-colors">Batal</Link>
+            <button type="submit" disabled={isLoading} className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm shadow-sky-600/30 disabled:opacity-50 transition-colors">
               {isLoading ? 'Menyimpan...' : 'Simpan Data'}
             </button>
           </div>

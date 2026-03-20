@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 import AlamatBertingkat from '@/components/AlamatBertingkat';
 
 export default function SantriPage() {
@@ -145,31 +146,31 @@ export default function SantriPage() {
       });
 
       if (response.ok) {
-        alert(`${nama} berhasil diluluskan dan dimasukkan ke data alumni (APPROVED).`);
+        Swal.fire('Berhasil!', `${nama} berhasil diluluskan dan dimasukkan ke data alumni (APPROVED).`, 'success');
         closeModalLuluskan();
         getSantriAktif(); // Refresh tabel otomatis
       } else {
         const error = await response.json();
-        alert(`Gagal memproses: ${error.message}`);
+        Swal.fire('Gagal!', `Gagal memproses: ${error.message}`, 'error');
       }
     } catch (error) {
       console.error("Error saat meluluskan santri:", error);
-      alert('Terjadi kesalahan koneksi.');
+      Swal.fire('Error!', 'Terjadi kesalahan koneksi.', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <main className="bg-gray-50 min-h-screen">
+    <main className="bg-slate-50 min-h-screen">
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 relative">
-        <div className="bg-white shadow-md rounded-lg overflow-hidden relative z-10">
+        <div className="bg-white shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden relative z-10 border border-slate-100">
 
           {/* --- Header Data --- */}
-          <div className="px-6 py-4 border-b flex flex-col sm:flex-row sm:justify-between sm:items-center bg-white">
+          <div className="px-8 py-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center bg-white">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Data Santri Aktif</h1>
-              <p className="text-gray-600 mt-1">Total Filter: {filteredSantri.length} / {santriList.length} Santri</p>
+              <h1 className="text-2xl font-bold text-slate-800">Data Santri Aktif</h1>
+              <p className="text-slate-500 mt-1">Total Filter: <span className="font-semibold text-slate-700">{filteredSantri.length}</span> / {santriList.length} Santri</p>
             </div>
           </div>
 
@@ -317,8 +318,8 @@ export default function SantriPage() {
       {/* --- MODAL LULUSKAN --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeModalLuluskan}></div>
-          <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={closeModalLuluskan}></div>
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-slate-100">
 
             <div className="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
               <h2 className="text-xl font-bold text-gray-800">Luluskan Santri: {selectedSantri?.nama}</h2>

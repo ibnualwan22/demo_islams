@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 import AlamatBertingkat from '@/components/AlamatBertingkat';
 
 export default function EditAlumniPage() {
@@ -121,14 +122,14 @@ export default function EditAlumniPage() {
       });
 
       if (response.ok) {
-        alert('Data alumni berhasil diperbarui!');
+        Swal.fire('Berhasil!', 'Data alumni berhasil diperbarui.', 'success');
         router.push('/admin/alumni');
       } else {
-        alert('Gagal memperbarui data.');
+        Swal.fire('Gagal!', 'Gagal memperbarui data.', 'error');
       }
     } catch (error) {
       console.error("Error saat update:", error);
-      alert('Terjadi kesalahan koneksi.');
+      Swal.fire('Error!', 'Terjadi kesalahan koneksi.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -143,13 +144,13 @@ export default function EditAlumniPage() {
   const alamatDomisiliTeks = [savedAlamatDomisili.desa, savedAlamatDomisili.kecamatan, savedAlamatDomisili.kabupaten, savedAlamatDomisili.provinsi].filter(Boolean).join(', ');
 
   return (
-    <main className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
-      <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg">
-        <div className="px-6 py-4 border-b">
-          <h1 className="text-2xl font-bold text-gray-800">Edit Data Alumni</h1>
-          <p className="text-sm text-gray-500">Alamat tidak perlu diubah ulang jika masih sama.</p>
+    <main className="bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="max-w-3xl mx-auto bg-white shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden border border-slate-100">
+        <div className="px-8 py-6 border-b border-slate-100 bg-white">
+          <h1 className="text-2xl font-bold text-slate-800">Edit Data Alumni</h1>
+          <p className="text-sm text-slate-500 mt-1">Perbarui data alumni yang sudah ada. Alamat tidak perlu diubah ulang jika masih sama.</p>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
 
           {/* NAMA & GENDER */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -244,9 +245,9 @@ export default function EditAlumniPage() {
           </div>
 
           {/* TOMBOL */}
-          <div className="flex items-center justify-end space-x-4 pt-4">
-            <Link href="/admin/alumni" className="text-gray-600 hover:text-gray-800">Batal</Link>
-            <button type="submit" disabled={isLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400">
+          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-slate-100 mt-6">
+            <Link href="/admin/alumni" className="px-4 py-2 text-slate-600 hover:text-slate-900 font-medium transition-colors">Batal</Link>
+            <button type="submit" disabled={isLoading} className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm shadow-sky-600/30 disabled:opacity-50 transition-colors">
               {isLoading ? 'Memperbarui...' : 'Perbarui Data'}
             </button>
           </div>
